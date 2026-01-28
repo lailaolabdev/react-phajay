@@ -53,8 +53,8 @@ window.location.href = paymentLink.redirectURL;
 
 ```typescript
 const client = new PhaJayClient({
-  secretKey: 'your-secret-key', // Required: Get from PhaJay Portal
-  baseUrl: 'custom-url'        // Optional: Custom API base URL
+  secretKey: 'your-secret-key' // Required: Get from PhaJay Portal
+  // baseUrl is automatically set to: https://payment-gateway.phajay.co/v1/api
 });
 ```
 
@@ -261,12 +261,7 @@ try {
 ```typescript
 const client = new PhaJayClient({
   secretKey: 'your-secret-key'  // Get from PhaJay Portal
-});
-
-// With custom API base URL (optional)
-const customClient = new PhaJayClient({
-  secretKey: 'your-secret-key',
-  baseUrl: 'https://custom-api.example.com/v1/api'
+  // No need to specify baseUrl - automatically uses https://payment-gateway.phajay.co/v1/api
 });
 ```
 
@@ -400,8 +395,8 @@ interface QRSubscriptionConfig {
 
 ```typescript
 interface PhaJayConfig {
-  secretKey: string;                    // Required
-  baseUrl?: string;                     // Optional custom API URL
+  secretKey: string;                    // Required: Your PhaJay secret key
+  baseUrl?: string;                     // Optional: Defaults to https://payment-gateway.phajay.co/v1/api
 }
 ```
 

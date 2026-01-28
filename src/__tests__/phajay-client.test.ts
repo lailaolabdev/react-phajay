@@ -1,4 +1,8 @@
-import { PhaJayClient, SupportedBank } from '../index';
+import { PhaJayClient } from '../phajay-client';
+import { SupportedBank } from '../types';
+import { PaymentLinkService } from '../payment-link.service';
+import { PaymentQRService } from '../payment-qr.service';
+import { CreditCardService } from '../credit-card.service';
 
 describe('PhaJayClient', () => {
   const mockConfig = {

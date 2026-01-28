@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { SimpleEventEmitter } from './simple-event-emitter';
 import { QRSubscriptionConfig, QRPaymentCallback, QRSubscriptionEvents } from './types';
 
 /**
@@ -7,7 +7,7 @@ import { QRSubscriptionConfig, QRPaymentCallback, QRSubscriptionEvents } from '.
  * Provides real-time subscription to Payment QR callbacks using SocketIO.
  * Automatically handles connection, reconnection, and event dispatching.
  */
-export class QRSubscriptionService extends EventEmitter {
+export class QRSubscriptionService extends SimpleEventEmitter {
   private config: QRSubscriptionConfig;
   private socket: any = null;
   private isConnected: boolean = false;
@@ -44,7 +44,17 @@ export class QRSubscriptionService extends EventEmitter {
   async connect(): Promise<void> {
     try {
       // Dynamic import for socket.io-client (only load when needed)
-      const { io } = await import('socket.io-client');
+      let io: any;
+      
+      try {
+        const socketModule = await import('socket.io-client');
+        io = socketModule.io;
+      } catch (importError) {
+        // Fallback for environments where socket.io-client is not available
+        console.warn('socket.io-client not available, subscription features disabled');
+        this.emit(QRSubscriptionEvents.ERROR, new Error('socket.io-client not available. Install with: npm install socket.io-client'));
+        return;
+      }
       
       if (this.socket && this.isConnected) {
         console.log('Socket is already connected');
@@ -63,8 +73,8 @@ export class QRSubscriptionService extends EventEmitter {
       this.setupSocketEventHandlers();
       
     } catch (error) {
-      console.error('Failed to load socket.io-client:', error);
-      this.emit(QRSubscriptionEvents.ERROR, new Error('Failed to load socket.io-client. Make sure to install: npm install socket.io-client'));
+      console.error('Failed to connect to socket:', error);
+      this.emit(QRSubscriptionEvents.ERROR, new Error('Failed to connect to payment subscription service'));
     }
   }
 
