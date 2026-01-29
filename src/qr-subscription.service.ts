@@ -67,7 +67,14 @@ export class QRSubscriptionService extends SimpleEventEmitter {
         autoConnect: true,
         reconnection: true,
         reconnectionAttempts: this.maxReconnectAttempts,
-        reconnectionDelay: this.reconnectDelay
+        reconnectionDelay: this.reconnectDelay,
+        transports: ['websocket', 'polling'], // Try websocket first, fallback to polling
+        upgrade: true,
+        timeout: 20000, // 20 seconds timeout
+        forceNew: true,
+        // Add CORS and connection options for browser compatibility
+        withCredentials: false,
+        extraHeaders: {}
       });
 
       this.setupSocketEventHandlers();
@@ -105,8 +112,25 @@ export class QRSubscriptionService extends SimpleEventEmitter {
     this.socket.on('connect_error', (error: any) => {
       console.error('❌ Connection failed:', error);
       this.isConnected = false;
-      this.emit(QRSubscriptionEvents.ERROR, error);
+      
+      // Handle specific transport errors
+      let errorMessage = 'Failed to connect to payment subscription service';
+      if (error.message?.includes('xhr poll error')) {
+        errorMessage = 'Network connection failed. Please check your internet connection and try again.';
+      } else if (error.message?.includes('timeout')) {
+        errorMessage = 'Connection timeout. Server may be temporarily unavailable.';
+      } else if (error.message?.includes('CORS')) {
+        errorMessage = 'Cross-origin request blocked. Please contact support.';
+      }
+      
+      this.emit(QRSubscriptionEvents.ERROR, new Error(errorMessage));
       this.handleReconnection();
+    });
+
+    // Transport error (specific for polling/websocket issues)
+    this.socket.on('transport-error', (error: any) => {
+      console.error('🔌 Transport error:', error);
+      this.emit(QRSubscriptionEvents.ERROR, new Error('Connection transport failed. Trying alternative connection method...'));
     });
 
     // Disconnection

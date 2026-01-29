@@ -1,0 +1,295 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* PhaJay Payment Components Styles */
+.payment-demos {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.payment-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.payment-section h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+
+/* Custom Button Example */
+.custom-payment-button {
+  background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+  border-radius: 12px !important;
+  padding: 16px 32px !important;
+  font-size: 16px !important;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+.custom-payment-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #c0392b, #a93226) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6) !important;
+}
+
+/* Container Styles */
+/* .phajay-payment-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-section button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.payment-section button:hover {
+  background-color: #0056b3;
+}
+
+.payment-section button:active {
+  background-color: #004085;
+}
+
+.payment-demos h2 {
+  color: #333;
+  margin-bottom: 2rem;
+} */
+
+/* QR Code display styles */
+.qr-info {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #28a745;
+  margin-bottom: 16px;
+}
+
+.qr-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.qr-info strong {
+  color: #333;
+}
+
+.phajay-payment-qr {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.phajay-payment-qr img {
+  border: 2px solid #28a745 !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.phajay-payment-qr p {
+  margin: 0 0 8px 0 !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  color: #28a745;
+}
+
+.phajay-payment-qr a {
+  padding: 8px 16px !important;
+  background-color: #17a2b8 !important;
+  color: white !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  transition: background-color 0.3s;
+}
+
+.phajay-payment-qr a:hover {
+  background-color: #138496 !important;
+}
+
+/* QR Code Display Styles */
+.qr-display {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 2px solid #28a745;
+  text-align: center;
+}
+
+.qr-display h4 {
+  margin: 0 0 16px 0;
+  color: #28a745;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.qr-instructions {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.qr-instructions p {
+  margin: 0 0 8px 0;
+  font-weight: bold;
+  color: #856404;
+}
+
+.qr-instructions ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #856404;
+}
+
+.qr-instructions li {
+  margin: 4px 0;
+}
+
+.clear-qr-btn {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: background-color 0.3s !important;
+  margin-top: 12px !important;
+}
+
+.clear-qr-btn:hover {
+  background-color: #c82333 !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .payment-demos {
+    background-color: #2a2a2a;
+    border-color: #555;
+  }
+  
+  .payment-section {
+    background-color: #333;
+    border-color: #555;
+  }
+  
+  .payment-section h3,
+  .payment-demos h2 {
+    color: #fff;
+  }
+
+  .phajay-payment-qr p {
+    color: #4ade80 !important;
+  }
+
+  .phajay-payment-qr img {
+    border-color: #4ade80 !important;
+  }
+
+  .qr-info {
+    background-color: #2d3748;
+    border-left-color: #4ade80;
+  }
+
+  .qr-info p {
+    color: #cbd5e0;
+  }
+
+  .qr-info strong {
+    color: #e2e8f0;
+  }
+
+  .qr-display {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: #4ade80;
+  }
+
+  .qr-display h4 {
+    color: #4ade80;
+  }
+
+  .qr-instructions {
+    background-color: #2d3748;
+    border-color: #4ade80;
+  }
+
+  .qr-instructions p,
+  .qr-instructions li {
+    color: #e2e8f0;
+  }
+}

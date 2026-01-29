@@ -1,6 +1,7 @@
-import { useState, useCallback, ReactNode } from 'react';
+import { useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import { usePhaJayClient } from './PhaJayProvider';
 import { PaymentQRRequest, PaymentQRResponse, SupportedBank } from '../types';
+import { QRSubscriptionService } from '../qr-subscription.service';
 
 export interface PaymentQRProps extends Omit<PaymentQRRequest, 'amount' | 'bank'> {
   bank: SupportedBank | string;
@@ -9,17 +10,16 @@ export interface PaymentQRProps extends Omit<PaymentQRRequest, 'amount' | 'bank'
   onSuccess?: (response: PaymentQRResponse) => void;
   onError?: (error: Error) => void;
   onLoading?: (loading: boolean) => void;
+  // Payment subscription props (subscription is always enabled)
+  onPaymentSuccess?: (paymentData: any) => void;
+  onPaymentError?: (error: Error) => void;
   className?: string;
-  style?: React.CSSProperties;
   disabled?: boolean;
-  showQRCode?: boolean;
-  showDeepLink?: boolean;
-  qrCodeSize?: number;
 }
 
 /**
- * Payment QR Component
- * Generates QR code for bank-specific payments
+ * Payment QR Component with Automatic Real-time Payment Subscription
+ * Generates QR code for bank-specific payments and automatically listens for payment status
  * 
  * @example
  * ```tsx
@@ -28,10 +28,16 @@ export interface PaymentQRProps extends Omit<PaymentQRRequest, 'amount' | 'bank'
  *   amount={25000}
  *   description="Coffee payment"
  *   tag1="shop_123"
- *   showQRCode={true}
  *   onSuccess={(response) => {
  *     console.log('QR generated:', response.qrCode);
  *     console.log('Deep link:', response.link);
+ *   }}
+ *   onPaymentSuccess={(paymentData) => {
+ *     console.log('Payment received!', paymentData);
+ *     alert('Payment successful!');
+ *   }}
+ *   onPaymentError={(error) => {
+ *     console.log('Payment failed:', error);
  *   }}
  * >
  *   Generate QR Code
@@ -49,16 +55,79 @@ export function PaymentQR({
   onSuccess,
   onError,
   onLoading,
+  onPaymentSuccess,
+  onPaymentError,
   className = '',
-  style = {},
-  disabled = false,
-  showQRCode = false,
-  showDeepLink = false,
-  qrCodeSize = 200
+  disabled = false
 }: PaymentQRProps) {
   const client = usePhaJayClient();
   const [loading, setLoading] = useState(false);
-  const [qrResponse, setQrResponse] = useState<PaymentQRResponse | null>(null);
+  const subscriptionRef = useRef<QRSubscriptionService | null>(null);
+
+  // Start payment subscription (always enabled when QR is generated)
+  const startPaymentSubscription = useCallback(async (transactionId: string) => {
+    if (!client) {
+      console.warn('Client not available for subscription');
+      return;
+    }
+
+    try {
+      console.log('🔔 Starting payment subscription for transaction:', transactionId);
+
+      // Check if client config exists
+      if (!(client as any).paymentQR?.config?.secretKey) {
+        console.error('❌ Client configuration or secret key not found');
+        onPaymentError?.(new Error('Secret key not available for subscription'));
+        return;
+      }
+
+      const subscription = new QRSubscriptionService({
+        socketUrl: 'https://payment-gateway.phajay.co/',
+        secretKey: (client as any).paymentQR.config.secretKey,
+        onPaymentReceived: (paymentData) => {
+          console.log('💰 Payment received:', paymentData);
+          if (paymentData.transactionId === transactionId) {
+            onPaymentSuccess?.(paymentData);
+            stopPaymentSubscription();
+          }
+        },
+        onError: (error) => {
+          console.error('❌ Subscription error:', error);
+          onPaymentError?.(error);
+        },
+        onConnect: () => {
+          console.log('✅ Subscription connected');
+        },
+        onDisconnect: () => {
+          console.log('❌ Subscription disconnected');
+        }
+      });
+
+      subscriptionRef.current = subscription;
+      await subscription.connect();
+
+    } catch (error) {
+      console.error('Failed to start payment subscription:', error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      onPaymentError?.(errorObj);
+    }
+  }, [client, onPaymentSuccess, onPaymentError]);
+
+  // Stop payment subscription
+  const stopPaymentSubscription = useCallback(() => {
+    if (subscriptionRef.current) {
+      console.log('⏹️ Stopping payment subscription');
+      subscriptionRef.current.disconnect();
+      subscriptionRef.current = null;
+    }
+  }, []);
+
+  // Cleanup subscription on unmount
+  useEffect(() => {
+    return () => {
+      stopPaymentSubscription();
+    };
+  }, [stopPaymentSubscription]);
 
   const generateQRCode = useCallback(async () => {
     if (disabled || loading) return;
@@ -76,8 +145,12 @@ export function PaymentQR({
         tag3
       });
 
-      setQrResponse(response);
       onSuccess?.(response);
+
+      // Start payment subscription automatically
+      if (response.transactionId) {
+        startPaymentSubscription(response.transactionId);
+      }
 
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error(String(error));
@@ -101,79 +174,22 @@ export function PaymentQR({
     loading
   ]);
 
-  const buttonStyle: React.CSSProperties = {
-    padding: '12px 24px',
-    backgroundColor: loading ? '#cccccc' : '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: loading || disabled ? 'not-allowed' : 'pointer',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    transition: 'background-color 0.2s',
-    opacity: disabled ? 0.6 : 1,
-    marginBottom: showQRCode || showDeepLink ? '16px' : '0',
-    ...style
-  };
-
-  const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '12px'
-  };
-
-  const qrImageStyle: React.CSSProperties = {
-    width: qrCodeSize,
-    height: qrCodeSize,
-    border: '2px solid #ddd',
-    borderRadius: '8px',
-    padding: '8px'
-  };
-
-  const linkStyle: React.CSSProperties = {
-    padding: '8px 16px',
-    backgroundColor: '#17a2b8',
-    color: 'white',
-    textDecoration: 'none',
-    borderRadius: '4px',
-    fontSize: '12px',
-    fontWeight: 'bold'
+  // Generate CSS class names based on state
+  const getButtonClasses = () => {
+    const baseClasses = ['phajay-payment-base'];
+    if (loading) baseClasses.push('loading');
+    // Add custom className first for higher specificity
+    if (className) baseClasses.push(className);
+    return baseClasses.join(' ');
   };
 
   return (
-    <div className={`phajay-payment-qr ${className}`} style={containerStyle}>
-      <button
-        onClick={generateQRCode}
-        disabled={disabled || loading}
-        style={buttonStyle}
-      >
-        {loading ? 'Generating...' : children}
-      </button>
-
-      {qrResponse && showQRCode && qrResponse.qrCode && (
-        <div>
-          <p style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
-            QR Code for {bank} Bank:
-          </p>
-          <img
-            src={`data:image/png;base64,${qrResponse.qrCode}`}
-            alt={`QR Code for ${bank}`}
-            style={qrImageStyle}
-          />
-        </div>
-      )}
-
-      {qrResponse && showDeepLink && qrResponse.link && (
-        <a
-          href={qrResponse.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={linkStyle}
-        >
-          Open in {bank} App
-        </a>
-      )}
-    </div>
+    <button
+      onClick={generateQRCode}
+      disabled={disabled || loading}
+      className={getButtonClasses()}
+    >
+      {loading ? 'Generating...' : children}
+    </button>
   );
 }

@@ -1,5 +1,6 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useMemo } from 'react';
 import { PhaJayClient } from '../phajay-client';
+import { PhaJayConfig } from '../types';
 
 interface PhaJayContextValue {
   client: PhaJayClient | null;
@@ -8,8 +9,7 @@ interface PhaJayContextValue {
 const PhaJayContext = createContext<PhaJayContextValue>({ client: null });
 
 export interface PhaJayProviderProps {
-  secretKey: string;
-  baseUrl?: string;
+  config: PhaJayConfig;
   children: ReactNode;
 }
 
@@ -21,15 +21,15 @@ export interface PhaJayProviderProps {
  * ```tsx
  * function App() {
  *   return (
- *     <PhaJayProvider secretKey="your-secret-key">
+ *     <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
  *       <PaymentComponents />
  *     </PhaJayProvider>
  *   );
  * }
  * ```
  */
-export function PhaJayProvider({ secretKey, baseUrl, children }: PhaJayProviderProps) {
-  const client = new PhaJayClient({ secretKey, baseUrl });
+export function PhaJayProvider({ config, children }: PhaJayProviderProps) {
+  const client = new PhaJayClient(config);
 
   return (
     <PhaJayContext.Provider value={{ client }}>

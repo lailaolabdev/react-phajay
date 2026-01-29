@@ -9,14 +9,13 @@ export interface PaymentLinkProps extends Omit<PaymentLinkRequest, 'amount'> {
   onError?: (error: Error) => void;
   onLoading?: (loading: boolean) => void;
   className?: string;
-  style?: React.CSSProperties;
   disabled?: boolean;
   autoRedirect?: boolean;
 }
 
 /**
  * Payment Link Component
- * Creates a payment link and optionally redirects user to payment page
+ * Creates a payment link and automatically redirects user to payment page by default
  * 
  * @example
  * ```tsx
@@ -26,12 +25,11 @@ export interface PaymentLinkProps extends Omit<PaymentLinkRequest, 'amount'> {
  *   orderNo="ORDER_123"
  *   onSuccess={(response) => {
  *     console.log('Payment link created:', response.redirectURL);
- *     // Handle success - redirect or show link
+ *     // Auto redirect is enabled by default
  *   }}
  *   onError={(error) => {
  *     console.error('Error creating payment link:', error);
  *   }}
- *   autoRedirect={true}
  * >
  *   Pay Now
  * </PaymentLink>
@@ -49,9 +47,8 @@ export function PaymentLink({
   onError,
   onLoading,
   className = '',
-  style = {},
   disabled = false,
-  autoRedirect = false
+  autoRedirect = true
 }: PaymentLinkProps) {
   const client = usePhaJayClient();
   const [loading, setLoading] = useState(false);
@@ -102,26 +99,20 @@ export function PaymentLink({
     autoRedirect
   ]);
 
-  const buttonStyle: React.CSSProperties = {
-    padding: '12px 24px',
-    backgroundColor: loading ? '#cccccc' : '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: loading || disabled ? 'not-allowed' : 'pointer',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    transition: 'background-color 0.2s',
-    opacity: disabled ? 0.6 : 1,
-    ...style
+  // Generate CSS class names based on state
+  const getButtonClasses = () => {
+    const baseClasses = ['phajay-payment-base'];
+    if (loading) baseClasses.push('loading');
+    // Add custom className first for higher specificity
+    if (className) baseClasses.push(className);
+    return baseClasses.join(' ');
   };
 
   return (
     <button
       onClick={handleCreatePaymentLink}
       disabled={disabled || loading}
-      className={`phajay-payment-link ${className}`}
-      style={buttonStyle}
+      className={getButtonClasses()}
     >
       {loading ? 'Creating...' : children}
     </button>

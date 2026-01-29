@@ -10,22 +10,6 @@ export { QRSubscriptionService } from './qr-subscription.service';
 // Types and interfaces
 export * from './types';
 
-// React Components (conditionally exported)
-export {
-  PhaJayProvider,
-  usePhaJayClient,
-  PaymentLink,
-  PaymentQR,
-  PaymentCreditCard
-} from './react';
-
-export type {
-  PhaJayProviderProps,
-  PaymentLinkProps,
-  PaymentQRProps,
-  PaymentCreditCardProps
-} from './react';
-
 // Re-export the main client as default
 import { PhaJayClient } from './phajay-client';
 export default PhaJayClient;

@@ -9,14 +9,13 @@ export interface PaymentCreditCardProps extends Omit<CreditCardRequest, 'amount'
   onError?: (error: Error) => void;
   onLoading?: (loading: boolean) => void;
   className?: string;
-  style?: React.CSSProperties;
   disabled?: boolean;
   autoRedirect?: boolean;
 }
 
 /**
  * Payment Credit Card Component
- * Creates credit card payment and optionally redirects to payment page
+ * Creates credit card payment and automatically redirects to payment page by default
  * 
  * @example
  * ```tsx
@@ -27,8 +26,8 @@ export interface PaymentCreditCardProps extends Omit<CreditCardRequest, 'amount'
  *   onSuccess={(response) => {
  *     console.log('Payment URL:', response.paymentUrl);
  *     console.log('Transaction ID:', response.transactionId);
+ *     // Auto redirect is enabled by default
  *   }}
- *   autoRedirect={true}
  * >
  *   Pay with Credit Card
  * </PaymentCreditCard>
@@ -45,9 +44,8 @@ export function PaymentCreditCard({
   onError,
   onLoading,
   className = '',
-  style = {},
   disabled = false,
-  autoRedirect = false
+  autoRedirect = true
 }: PaymentCreditCardProps) {
   const client = usePhaJayClient();
   const [loading, setLoading] = useState(false);
@@ -96,26 +94,20 @@ export function PaymentCreditCard({
     autoRedirect
   ]);
 
-  const buttonStyle: React.CSSProperties = {
-    padding: '12px 24px',
-    backgroundColor: loading ? '#cccccc' : '#dc3545',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: loading || disabled ? 'not-allowed' : 'pointer',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    transition: 'background-color 0.2s',
-    opacity: disabled ? 0.6 : 1,
-    ...style
+  // Generate CSS class names based on state
+  const getButtonClasses = () => {
+    const baseClasses = ['phajay-payment-base'];
+    if (loading) baseClasses.push('loading');
+    // Add custom className first for higher specificity
+    if (className) baseClasses.push(className);
+    return baseClasses.join(' ');
   };
 
   return (
     <button
       onClick={handleCreatePayment}
       disabled={disabled || loading}
-      className={`phajay-payment-credit-card ${className}`}
-      style={buttonStyle}
+      className={getButtonClasses()}
     >
       {loading ? 'Processing...' : children}
     </button>

@@ -1,0 +1,31 @@
+/* PhaJay Payment Components Default Styles */
+
+.phajay-payment-base {
+  padding: 12px 24px;
+  background-color: #09326a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  opacity: 1;
+  transform: none;
+}
+
+.phajay-payment-base:hover:not(:disabled) {
+  background-color: #07274a;
+  transform: translateY(-1px);
+}
+
+.phajay-payment-base:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.phajay-payment-base.loading {
+  background-color: #07274a;
+  cursor: not-allowed;
+}

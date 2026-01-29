@@ -9,8 +9,10 @@ Official TypeScript/JavaScript SDK for PhaJay Payment Gateway - Supporting Payme
 ## Features
 
 - 🏦 **Payment Links** - Single API integration connecting to multiple banks (JDB, LDB, IB, BCEL, STB)
-- 📱 **QR Code Payments** - Bank-specific QR codes for mobile banking apps
+- 📱 **QR Code Payments** - Bank-specific QR codes for mobile banking apps with real-time subscription
 - 💳 **Credit Card Payments** - Secure 3DS credit card processing
+- ⚡ **React Components** - Ready-to-use React components for seamless integration
+- 🔴 **Real-time Subscriptions** - WebSocket-based payment monitoring and callbacks
 - 🔒 **Type Safe** - Full TypeScript support with comprehensive type definitions
 - 📝 **Well Documented** - Comprehensive documentation with examples
 
@@ -24,6 +26,18 @@ Or using yarn:
 
 ```bash
 yarn add phajay-payment-sdk
+```
+
+### Optional Dependencies
+
+For real-time payment subscription features (WebSocket):
+```bash
+npm install socket.io-client
+```
+
+For React component usage:
+```bash
+npm install react react-dom
 ```
 
 ## Quick Start
@@ -46,6 +60,164 @@ const paymentLink = await client.paymentLink.createPaymentLink({
 // Redirect user to payment page
 window.location.href = paymentLink.redirectURL;
 ```
+
+## React Components
+
+PhaJay SDK comes with ready-to-use React components for quick integration:
+
+### Auto-Redirect Features
+
+All payment components automatically redirect users to the payment page by default:
+
+```jsx
+// PaymentLink - Auto redirects to payment gateway
+<PaymentLink 
+  amount={50000}
+  description="Coffee Payment"
+  onSuccess={(response) => {
+    console.log('Redirecting to payment page...');
+    // User will be automatically redirected
+  }}
+/>
+
+// PaymentCreditCard - Auto redirects to credit card form
+<PaymentCreditCard 
+  amount={25000}
+  description="Premium Service"
+  onSuccess={(response) => {
+    console.log('Redirecting to credit card payment...');
+    // User will be automatically redirected
+  }}
+/>
+
+// To disable auto redirect, set autoRedirect={false}
+<PaymentLink 
+  amount={10000}
+  autoRedirect={false}
+  onSuccess={(response) => {
+    // Handle manually - no automatic redirect
+    console.log('Payment URL:', response.redirectURL);
+  }}
+/>
+```
+
+### PaymentQR Component with Automatic Real-time Subscription
+
+```jsx
+import { PhaJayProvider, PaymentQR } from 'phajay-payment-sdk/react';
+
+function App() {
+  return (
+    <PhaJayProvider secretKey="your-secret-key">
+      <PaymentQR 
+        amount={50000}
+        description="Coffee Payment"
+        bank="BCEL"
+        onPaymentSuccess={(data) => {
+          console.log('Payment received!', data);
+          // Handle successful payment - subscription starts automatically!
+        }}
+        onPaymentError={(error) => {
+          console.error('Payment error:', error);
+        }}
+      />
+    </PhaJayProvider>
+  );
+}
+```
+
+### Customizing Button Styles
+
+All payment components use className-based styling for maximum flexibility. You can customize them using CSS classes, Tailwind CSS, or any CSS framework:
+
+```jsx
+// Using Tailwind CSS
+<PaymentQR 
+  amount={25000}
+  bank="BCEL"
+  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+>
+  Beautiful QR Button
+</PaymentQR>
+
+// Using custom CSS classes
+<PaymentLink 
+  amount={100000}
+  orderNo="ORDER_123"
+  className="custom-payment-btn gradient-btn"
+>
+  Gradient Payment Link
+</PaymentLink>
+
+// Using CSS modules
+<PaymentCreditCard 
+  amount={75000}
+  className={styles.premiumButton}
+>
+  Premium Card Payment
+</PaymentCreditCard>
+```
+
+### CSS Class Names
+
+Each component provides default CSS classes that you can override:
+
+- **PaymentQR**: `.phajay-payment-qr-button` (button only - no container)
+- **PaymentLink**: `.phajay-payment-link` (button)
+- **PaymentCreditCard**: `.phajay-payment-credit-card` (button)
+
+```css
+/* Example CSS styling */
+.phajay-payment-qr-button {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.phajay-payment-qr-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.phajay-payment-qr-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+```
+
+### Error Handling & Demo Mode
+
+The PaymentQR component includes automatic subscription and intelligent error handling:
+
+```typescript
+// No need to enable subscription - it's automatic!
+<PaymentQR 
+  amount={50000}
+  bank="BCEL"
+  onPaymentSuccess={(data) => {
+    // This will be called when payment is received
+    // OR after 10 seconds in demo mode if connection fails
+    console.log('Payment completed:', data);
+  }}
+  onPaymentError={(error) => {
+    // Handle connection errors gracefully
+    console.log('Payment monitoring error:', error.message);
+  }}
+/>
+```
+
+**Auto-Subscription Features:**
+- � **Automatic Start**: Subscription begins immediately when QR is generated
+- 🔄 **No Configuration**: No `enableSubscription` prop needed
+- 🟢 **Visual Status**: Connection status shown automatically
+- 🔴 **Demo Fallback**: Simulates payment after 10 seconds if connection fails
+- ⏹️ **Auto Stop**: Subscription stops when payment is received or component unmounts
 
 ## Configuration
 

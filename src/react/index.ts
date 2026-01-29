@@ -1,3 +1,6 @@
+// Import default styles
+import './styles.css';
+
 // Payment Components
 export { PaymentLink } from './PaymentLink';
 export { PaymentQR } from './PaymentQR';
