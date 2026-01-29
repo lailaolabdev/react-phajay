@@ -1,0 +1,41 @@
+# Source files
+src/
+demo-connect-phajay-sdk/
+*.ts
+*.tsx
+!dist/**/*.d.ts
+
+# Config files
+rollup.config.js
+tsconfig.json
+jest.config.js
+.eslintrc.js
+vite.config.js
+
+# Development files
+.github/
+.vscode/
+.env
+.env.*
+*.log
+*.tgz
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests
+__tests__/
+*.test.*
+*.spec.*
+coverage/
+
+# Build artifacts
+node_modules/
+.git/
+.gitignore
+
+# OS files
+.DS_Store
+Thumbs.db

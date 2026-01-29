@@ -85,6 +85,10 @@ out
 .nuxt
 dist
 
+# Demo and Test Files - Must be at the end for higher priority
+demo-connect-phajay-sdk/
+css-test.html
+
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js
