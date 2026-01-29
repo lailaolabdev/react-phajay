@@ -92,6 +92,7 @@ function App() {
         description="Coffee Payment"
         bank="BCEL"
         onSuccess={(response) => {
+          // ✅ Required: Must handle QR code data
           console.log('QR Code generated:', response.qrCode);
           console.log('Deep Link:', response.link);
           console.log('Transaction ID:', response.transactionId);
@@ -183,6 +184,7 @@ function QRPaymentComponent() {
         description="Coffee Payment"
         bank="BCEL"
         onSuccess={(response) => {
+          // ✅ Required: Must handle QR code data
           console.log('QR Code generated:', response.qrCode);
           console.log('Deep Link:', response.link);
           console.log('Transaction ID:', response.transactionId);
@@ -499,6 +501,8 @@ const request: PaymentQRRequest = {
 
 ### PaymentQR Props
 
+> **⚠️ Important**: PaymentQR requires `onSuccess` callback to handle QR code data.
+
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
 | `bank` | `SupportedBank \| string` | ✅ | - | Bank code (BCEL, JDB, LDB, IB, STB) |
@@ -508,7 +512,7 @@ const request: PaymentQRRequest = {
 | `tag2` | `string` | ❌ | - | Optional custom field 2 |
 | `tag3` | `string` | ❌ | - | Optional custom field 3 |
 | `children` | `ReactNode` | ❌ | `"Generate QR Code"` | Button text/content |
-| `onSuccess` | `(response: PaymentQRResponse) => void` | ❌ | - | Callback when QR generated successfully |
+| `onSuccess` | `(response: PaymentQRResponse) => void` | ✅ | - | **Required:** Callback when QR generated successfully |
 | `onError` | `(error: Error) => void` | ❌ | - | Callback when QR generation fails |
 | `onLoading` | `(loading: boolean) => void` | ❌ | - | Callback for loading state changes |
 | `onPaymentSuccess` | `(paymentData: any) => void` | ❌ | - | Callback when payment received (real-time) |

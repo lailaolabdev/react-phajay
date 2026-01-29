@@ -7,7 +7,7 @@ export interface PaymentQRProps extends Omit<PaymentQRRequest, 'amount' | 'bank'
   bank: SupportedBank | string;
   amount: number;
   children?: ReactNode;
-  onSuccess?: (response: PaymentQRResponse) => void;
+  onSuccess: (response: PaymentQRResponse) => void;  // Required: Must handle QR data
   onError?: (error: Error) => void;
   onLoading?: (loading: boolean) => void;
   // Payment subscription props (subscription is always enabled)
@@ -21,6 +21,8 @@ export interface PaymentQRProps extends Omit<PaymentQRRequest, 'amount' | 'bank'
  * Payment QR Component with Automatic Real-time Payment Subscription
  * Generates QR code for bank-specific payments and automatically listens for payment status
  * 
+ * @param onSuccess Required callback to handle QR data when generated successfully
+ * 
  * @example
  * ```tsx
  * <PaymentQR
@@ -29,8 +31,10 @@ export interface PaymentQRProps extends Omit<PaymentQRRequest, 'amount' | 'bank'
  *   description="Coffee payment"
  *   tag1="shop_123"
  *   onSuccess={(response) => {
+ *     // Required: Handle QR data
  *     console.log('QR generated:', response.qrCode);
  *     console.log('Deep link:', response.link);
+ *     console.log('Transaction ID:', response.transactionId);
  *   }}
  *   onPaymentSuccess={(paymentData) => {
  *     console.log('Payment received!', paymentData);
