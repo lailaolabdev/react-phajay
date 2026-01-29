@@ -727,7 +727,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
-### Version 1.0.0 (Current)
+### Version 1.0.1 (Current)
+- 🐛 **Bug Fixes**: Fixed markdown syntax issues in documentation
+- 📝 **Documentation**: Simplified usage examples for better readability
+- ✅ **Required Props**: Made PaymentQR onSuccess callback required
+- 🎯 **Props Reference**: Added comprehensive component props tables
+
+### Version 1.0.0 (Previous)
 - 🎉 **Initial Release**: Complete React SDK for PhaJay Payment Gateway
 - ⚡ **Auto-CSS Injection**: Automatic styling without manual CSS imports
 - 🔄 **Single Import**: Import everything from `'react-phajay'`

@@ -1,6 +1,6 @@
 {
   "name": "react-phajay",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Official React SDK for PhaJay Payment Gateway - Supporting Payment QR, Payment Link and Credit Card services in Lao PDR",
   "main": "dist/index.js",
