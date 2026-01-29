@@ -91,6 +91,11 @@ function App() {
         amount={50000}
         description="Coffee Payment"
         bank="BCEL"
+        onSuccess={(response) => {
+          console.log('QR Code generated:', response.qrCode);
+          console.log('Deep Link:', response.link);
+          console.log('Transaction ID:', response.transactionId);
+        }}
         onPaymentSuccess={(data) => {
           console.log('Payment received!', data);
         }}
@@ -177,6 +182,12 @@ function QRPaymentComponent() {
         amount={50000}
         description="Coffee Payment"
         bank="BCEL"
+        onSuccess={(response) => {
+          console.log('QR Code generated:', response.qrCode);
+          console.log('Deep Link:', response.link);
+          console.log('Transaction ID:', response.transactionId);
+          // Display QR code in your UI
+        }}
         onPaymentSuccess={(data) => {
           console.log('Payment received!', data);
           // Real-time subscription starts automatically!
@@ -206,6 +217,9 @@ function StyledPayments() {
         amount={25000}
         bank="BCEL"
         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+        onSuccess={(response) => {
+          console.log('QR generated:', response.qrCode);
+        }}
       >
         Beautiful QR Button
       </PaymentQR>
@@ -237,6 +251,65 @@ function StyledPayments() {
 - 📊 **Visual Status**: Connection status indicators included
 - 🎯 **Demo Fallback**: Simulates payment success after 10 seconds if connection fails
 - ⏹️ **Auto-Stop**: Subscription ends when payment received or component unmounts
+
+### Complete PaymentQR Usage Example
+
+```jsx
+import React, { useState } from 'react';
+import { PhaJayProvider, PaymentQR } from 'react-phajay';
+
+function QRPaymentDemo() {
+  const [qrCode, setQrCode] = useState('');
+  const [deepLink, setDeepLink] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('');
+
+  return (
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
+      <div className="payment-demo">
+        <PaymentQR 
+          amount={50000}
+          description="Coffee Payment"
+          bank="BCEL"
+          onSuccess={(response) => {
+            // QR Code generated successfully
+            setQrCode(response.qrCode);
+            setDeepLink(response.link);
+            console.log('Transaction ID:', response.transactionId);
+          }}
+          onPaymentSuccess={(data) => {
+            // Payment received via real-time subscription
+            setPaymentStatus(`✅ Payment successful! Transaction: ${data.transactionId}`);
+          }}
+          onPaymentError={(error) => {
+            setPaymentStatus(`❌ Payment error: ${error.message}`);
+          }}
+          onError={(error) => {
+            console.error('QR generation error:', error);
+          }}
+        >
+          Generate BCEL QR Code
+        </PaymentQR>
+
+        {qrCode && (
+          <div className="qr-display">
+            <h3>Scan QR Code to Pay</h3>
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCode)}`} 
+              alt="Payment QR Code" 
+              className="border"
+            />
+            <p>Or <a href={deepLink} className="text-blue-500 underline">open in banking app</a></p>
+          </div>
+        )}
+
+        {paymentStatus && (
+          <div className="payment-status">{paymentStatus}</div>
+        )}
+      </div>
+    </PhaJayProvider>
+  );
+}
+```
 
 ## Configuration
 
@@ -422,6 +495,250 @@ const request: PaymentQRRequest = {
 };
 ```
 
+## Component Props Reference
+
+### PaymentQR Props
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `bank` | `SupportedBank \| string` | ✅ | - | Bank code (BCEL, JDB, LDB, IB, STB) |
+| `amount` | `number` | ✅ | - | Payment amount in LAK |
+| `description` | `string` | ✅ | - | Payment description |
+| `tag1` | `string` | ❌ | - | Optional custom field 1 |
+| `tag2` | `string` | ❌ | - | Optional custom field 2 |
+| `tag3` | `string` | ❌ | - | Optional custom field 3 |
+| `children` | `ReactNode` | ❌ | `"Generate QR Code"` | Button text/content |
+| `onSuccess` | `(response: PaymentQRResponse) => void` | ❌ | - | Callback when QR generated successfully |
+| `onError` | `(error: Error) => void` | ❌ | - | Callback when QR generation fails |
+| `onLoading` | `(loading: boolean) => void` | ❌ | - | Callback for loading state changes |
+| `onPaymentSuccess` | `(paymentData: any) => void` | ❌ | - | Callback when payment received (real-time) |
+| `onPaymentError` | `(error: Error) => void` | ❌ | - | Callback when payment fails (real-time) |
+| `className` | `string` | ❌ | `""` | Custom CSS classes |
+| `disabled` | `boolean` | ❌ | `false` | Disable the button |
+
+**PaymentQRResponse:**
+```typescript
+{
+  transactionId: string;  // Transaction ID
+  qrCode: string;        // QR Code as base64 string
+  link: string;          // Deep link for banking app
+  message: string;       // API response message
+}
+```
+
+### PaymentLink Props
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `amount` | `number` | ✅ | - | Payment amount in LAK |
+| `description` | `string` | ✅ | - | Payment description |
+| `orderNo` | `string` | ❌ | - | Optional order number |
+| `tag1` | `string` | ❌ | - | Optional custom field 1 |
+| `tag2` | `string` | ❌ | - | Optional custom field 2 |
+| `tag3` | `string` | ❌ | - | Optional custom field 3 |
+| `children` | `ReactNode` | ❌ | `"Create Payment Link"` | Button text/content |
+| `onSuccess` | `(response: PaymentLinkResponse) => void` | ❌ | - | Callback when payment link created |
+| `onError` | `(error: Error) => void` | ❌ | - | Callback when creation fails |
+| `onLoading` | `(loading: boolean) => void` | ❌ | - | Callback for loading state changes |
+| `className` | `string` | ❌ | `""` | Custom CSS classes |
+| `disabled` | `boolean` | ❌ | `false` | Disable the button |
+| `autoRedirect` | `boolean` | ❌ | `true` | Auto redirect to payment page |
+
+**PaymentLinkResponse:**
+```typescript
+{
+  redirectURL: string;   // Payment page URL
+  orderNo: string;      // Order number
+  message: string;      // API response message
+}
+```
+
+### PaymentCreditCard Props
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `amount` | `number` | ✅ | - | Payment amount in USD |
+| `description` | `string` | ✅ | - | Payment description |
+| `tag1` | `string` | ❌ | - | Optional custom field 1 |
+| `tag2` | `string` | ❌ | - | Optional custom field 2 |
+| `tag3` | `string` | ❌ | - | Optional custom field 3 |
+| `children` | `ReactNode` | ❌ | `"Pay with Credit Card"` | Button text/content |
+| `onSuccess` | `(response: CreditCardResponse) => void` | ❌ | - | Callback when payment URL created |
+| `onError` | `(error: Error) => void` | ❌ | - | Callback when creation fails |
+| `onLoading` | `(loading: boolean) => void` | ❌ | - | Callback for loading state changes |
+| `className` | `string` | ❌ | `""` | Custom CSS classes |
+| `disabled` | `boolean` | ❌ | `false` | Disable the button |
+| `autoRedirect` | `boolean` | ❌ | `true` | Auto redirect to payment page |
+
+**CreditCardResponse:**
+```typescript
+{
+  paymentUrl: string;      // Credit card payment URL
+  transactionId: string;   // Transaction ID
+  expirationTime: string;  // Payment link expiration
+  status: string;         // Payment status
+  message: string;        // API response message
+}
+```
+
+### Supported Banks
+
+| Bank Code | Bank Name | Description |
+|-----------|-----------|-------------|
+| `BCEL` | Banque pour le Commerce Extérieur Lao | External Trade Bank of Laos |
+| `JDB` | Joint Development Bank | Joint Development Bank |
+| `LDB` | Lao Development Bank | Lao Development Bank |
+| `IB` | Indochina Bank | Indochina Bank |
+| `STB` | ST Bank Laos | ST Bank Laos |
+
+### Detailed Props Usage Examples
+
+#### PaymentQR - All Props Example
+
+```jsx
+import { PhaJayProvider, PaymentQR } from 'react-phajay';
+
+function PaymentQRExample() {
+  const [loading, setLoading] = useState(false);
+  const [qrData, setQrData] = useState(null);
+
+  return (
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
+      <PaymentQR
+        // Required props
+        bank="BCEL"
+        amount={50000}
+        description="Premium Coffee"
+        
+        // Optional props
+        tag1="shop_001"
+        tag2="customer_123" 
+        tag3="table_05"
+        disabled={loading}
+        className="custom-qr-button bg-blue-500 text-white px-4 py-2 rounded"
+        
+        // Callbacks
+        onSuccess={(response) => {
+          setQrData(response);
+          console.log('QR generated:', response.qrCode);
+          console.log('Transaction ID:', response.transactionId);
+        }}
+        onError={(error) => {
+          console.error('QR generation failed:', error.message);
+        }}
+        onLoading={setLoading}
+        onPaymentSuccess={(paymentData) => {
+          console.log('Payment completed!', paymentData);
+          alert('Payment successful!');
+        }}
+        onPaymentError={(error) => {
+          console.error('Payment failed:', error.message);
+        }}
+      >
+        {loading ? 'Generating QR...' : 'Generate BCEL QR Code'}
+      </PaymentQR>
+
+      {qrData && (
+        <div className="qr-display mt-4">
+          <img 
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData.qrCode)}`}
+            alt="Payment QR Code"
+          />
+          <p><a href={qrData.link}>Open in Banking App</a></p>
+        </div>
+      )}
+    </PhaJayProvider>
+  );
+}
+```
+
+#### PaymentLink - All Props Example
+
+```jsx
+import { PhaJayProvider, PaymentLink } from 'react-phajay';
+
+function PaymentLinkExample() {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
+      <PaymentLink
+        // Required props
+        amount={75000}
+        description="Service Payment"
+        
+        // Optional props
+        orderNo="ORD-2024-001"
+        tag1="service_premium"
+        tag2="user_456"
+        tag3="monthly_subscription"
+        disabled={loading}
+        autoRedirect={false}  // Disable auto redirect
+        className="payment-link-btn bg-green-500 hover:bg-green-700"
+        
+        // Callbacks
+        onSuccess={(response) => {
+          console.log('Payment Link:', response.redirectURL);
+          console.log('Order No:', response.orderNo);
+          // Manual redirect or show link
+          window.open(response.redirectURL, '_blank');
+        }}
+        onError={(error) => {
+          console.error('Link creation failed:', error.message);
+          alert(`Error: ${error.message}`);
+        }}
+        onLoading={setLoading}
+      >
+        {loading ? 'Creating Link...' : 'Pay 75,000 LAK'}
+      </PaymentLink>
+    </PhaJayProvider>
+  );
+}
+```
+
+#### PaymentCreditCard - All Props Example
+
+```jsx
+import { PhaJayProvider, PaymentCreditCard } from 'react-phajay';
+
+function PaymentCreditCardExample() {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
+      <PaymentCreditCard
+        // Required props
+        amount={100}  // Amount in USD
+        description="Premium Subscription"
+        
+        // Optional props
+        tag1="subscription_premium"
+        tag2="user_789"
+        tag3="annual_plan"
+        disabled={loading}
+        autoRedirect={true}  // Auto redirect to payment page
+        className="credit-card-btn bg-purple-500 text-white"
+        
+        // Callbacks
+        onSuccess={(response) => {
+          console.log('Payment URL:', response.paymentUrl);
+          console.log('Transaction ID:', response.transactionId);
+          console.log('Expires:', response.expirationTime);
+          // User will be automatically redirected
+        }}
+        onError={(error) => {
+          console.error('Payment creation failed:', error.message);
+          alert(`Credit card payment error: ${error.message}`);
+        }}
+        onLoading={setLoading}
+      >
+        {loading ? 'Processing...' : 'Pay $100 USD'}
+      </PaymentCreditCard>
+    </PhaJayProvider>
+  );
+}
+```
+
 ## Examples
 
 ### Quick Examples
@@ -442,7 +759,17 @@ const link = await client.paymentLink.createPaymentLink({
 import { PhaJayProvider, PaymentQR } from 'react-phajay';
 
 <PhaJayProvider config={{ secretKey: "your-key" }}>
-  <PaymentQR amount={25000} bank="BCEL" />
+  <PaymentQR 
+    amount={25000} 
+    bank="BCEL" 
+    onSuccess={(response) => {
+      console.log('QR Code:', response.qrCode);
+      console.log('Deep Link:', response.link);
+    }}
+    onPaymentSuccess={(data) => {
+      console.log('Payment completed:', data);
+    }}
+  />
 </PhaJayProvider>
 ```
 
@@ -465,6 +792,11 @@ function PaymentDemo() {
           amount={50000}
           description="Product Purchase"
           bank="BCEL"
+          onSuccess={(response) => {
+            console.log('QR Code generated:', response.qrCode);
+            console.log('Deep Link:', response.link);
+            // You can display the QR code in your UI
+          }}
           onPaymentSuccess={(data) => {
             setPaymentStatus(`Payment successful! Transaction: ${data.transactionId}`);
           }}
