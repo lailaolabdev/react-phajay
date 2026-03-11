@@ -1,6 +1,9 @@
 // Import default styles
 import './styles.css';
 
+// Auto-inject Tailwind CSS for seamless usage
+import './tailwind-inject';
+
 // Payment Components
 export { PaymentLink } from './PaymentLink';
 export { PaymentQR } from './PaymentQR';
