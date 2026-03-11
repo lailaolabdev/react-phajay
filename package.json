@@ -1,6 +1,6 @@
 {
   "name": "react-phajay",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "🇱🇦 Official React TypeScript SDK for PhaJay Payment Gateway - Easy integration for Payment QR, Payment Links, and Credit Card processing in Laos (LAK) and USD. Features real-time WebSocket payment monitoring, auto-redirect, and comprehensive error handling.",
   "main": "dist/index.js",
