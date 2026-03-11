@@ -1,6 +1,8 @@
 # React PhaJay
 
-Official React SDK for PhaJay Payment Gateway - Supporting Payment QR, Payment Link and Credit Card services in Lao PDR.
+**Official React TypeScript SDK for PhaJay Payment Gateway** - Supporting Payment QR, Payment Link and Credit Card services in Lao PDR.
+
+> 🔍 **NPM Package**: [`react-phajay`](https://www.npmjs.com/package/react-phajay) | 🚀 **Install**: `npm install react-phajay`
 
 [![npm version](https://badge.fury.io/js/react-phajay.svg)](https://badge.fury.io/js/react-phajay)
 [![Downloads](https://img.shields.io/npm/dm/react-phajay)](https://www.npmjs.com/package/react-phajay)
@@ -17,9 +19,13 @@ Official React SDK for PhaJay Payment Gateway - Supporting Payment QR, Payment L
 
 ## Installation
 
+**Install the official react-phajay npm package:**
+
 ```bash
 npm install react-phajay
 ```
+
+**Or search for "react-phajay" on [npmjs.com](https://www.npmjs.com/package/react-phajay)**
 
 ## Quick Start
 
@@ -188,5 +194,11 @@ try {
 MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
+
+## 🔍 Search & Discovery
+
+**NPM Package**: [react-phajay](https://www.npmjs.com/package/react-phajay)
+
+**Search Terms**: `react-phajay npm`, `phajay react sdk`, `react payment gateway laos`, `npm react payment`, `phajay typescript`
 
 Made with ❤️ by [PhaJay Payment Gateway](https://www.phajay.co/en)
