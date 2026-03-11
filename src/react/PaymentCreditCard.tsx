@@ -11,9 +11,6 @@ export interface PaymentCreditCardProps extends Omit<CreditCardRequest, 'amount'
   className?: string;
   disabled?: boolean;
   autoRedirect?: boolean;
-  // Tailwind CSS support
-  useTailwind?: boolean;
-  tailwindClasses?: string;
 }
 
 /**
@@ -48,9 +45,7 @@ export function PaymentCreditCard({
   onLoading,
   className = '',
   disabled = false,
-  autoRedirect = true,
-  useTailwind = false,
-  tailwindClasses = ''
+  autoRedirect = true
 }: PaymentCreditCardProps) {
   const client = usePhaJayClient();
   const [loading, setLoading] = useState(false);
@@ -101,20 +96,10 @@ export function PaymentCreditCard({
 
   // Generate CSS class names based on state
   const getButtonClasses = () => {
-    if (useTailwind) {
-      // When using Tailwind, only use Tailwind classes
-      const classes = ['phajay-tailwind-override', 'phajay-payment-base'];
-      if (tailwindClasses) classes.push(tailwindClasses);
-      if (className) classes.push(className);
-      if (loading) classes.push('loading');
-      return classes.join(' ');
-    } else {
-      // Default CSS behavior
-      const baseClasses = ['phajay-payment-base'];
-      if (loading) baseClasses.push('loading');
-      if (className) baseClasses.push(className);
-      return baseClasses.join(' ');
-    }
+    const baseClasses = ['phajay-payment-base'];
+    if (loading) baseClasses.push('loading');
+    if (className) baseClasses.push(className);
+    return baseClasses.join(' ');
   };
 
   return (

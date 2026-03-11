@@ -1,8 +1,8 @@
 /* PhaJay Payment Components Default Styles */
 
-/* Base styles - Low specificity to allow Tailwind overrides */
-button.phajay-payment-base,
+/* Base styles - Very low specificity to allow easy overrides */
 .phajay-payment-base {
+  /* Default styles only - easily overridden by any class */
   padding: 12px 24px;
   background-color: #09326a;
   color: white;
@@ -12,73 +12,34 @@ button.phajay-payment-base,
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  opacity: 1;
-  transform: none;
-  outline: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
   line-height: 1.2;
+  outline: none;
 }
 
-/* Hover state - Can be overridden by Tailwind hover: classes */
-button.phajay-payment-base:hover:not(:disabled),
-.phajay-payment-base:hover:not(:disabled) {
+/* Only apply default hover if no other classes override */
+.phajay-payment-base:not([class*="bg-"]):hover:not(:disabled) {
   background-color: #07274a;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Active state */
-button.phajay-payment-base:active:not(:disabled),
-.phajay-payment-base:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
 /* Disabled state */
-button.phajay-payment-base:disabled,
 .phajay-payment-base:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-  transform: none;
-  box-shadow: none;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
 }
 
 /* Loading state */
-button.phajay-payment-base.loading,
 .phajay-payment-base.loading {
-  background-color: #07274a;
-  cursor: not-allowed;
-  opacity: 0.8;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
 }
 
-/* Tailwind-friendly utilities */
-.phajay-reset {
-  all: unset;
-}
-
-/* Higher specificity for Tailwind overrides */
-.phajay-tailwind-override.phajay-payment-base {
-  background-color: inherit;
-  color: inherit;
-  padding: inherit;
-  border-radius: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  box-shadow: inherit;
-  border: inherit;
-}
-
-.phajay-tailwind-override.phajay-payment-base:hover {
-  background-color: inherit;
-  transform: inherit;
-  box-shadow: inherit;
-}
-
-/* QR Code container styles - minimal specificity */
+/* QR Code container styles */
 .phajay-qr-container {
   display: flex;
   flex-direction: column;
