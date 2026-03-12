@@ -1,8 +1,10 @@
 /* PhaJay Payment Components Default Styles */
 
-/* Base styles - Very low specificity to allow easy overrides */
-.phajay-payment-base {
-  /* Default styles only - easily overridden by any class */
+/* PhaJay Payment Components Default Styles */
+/* Low specificity styles - easily overridden by Tailwind or any custom classes */
+
+.phajay-payment-base:not([class*="bg-"]):not([class*="p-"]):not([class*="text-"]):not([class*="border"]):not([class*="rounded"]):not([class*="shadow"]) {
+  /* Only apply defaults when no Tailwind classes are present */
   padding: 12px 24px;
   background-color: #09326a;
   color: white;
@@ -18,6 +20,18 @@
   text-decoration: none;
   line-height: 1.2;
   outline: none;
+}
+
+/* Apply base structural styles always (low priority) */
+.phajay-payment-base {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  line-height: 1.2;
+  outline: none;
+  transition: all 0.2s ease-in-out;
 }
 
 /* Only apply default hover if no other classes override */
